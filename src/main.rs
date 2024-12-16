@@ -1,0 +1,592 @@
+use core::time;
+use std::{mem::replace, result};
+
+fn main() {
+    println!("Hello, world!");
+    println!("Hello Lukman Sanjaya");
+}
+
+#[test]
+fn hello_test() {
+    println!("Hello test");
+}
+
+#[test]
+fn variable_test() {
+    let name = "Lukman Sanjaya";
+    // name = "lukman"; // error imutable variable tidak bisa diubah
+    println!("Hello {}", name);
+}
+
+#[test]
+fn mutable_test() {
+    let mut name = "Lukman Sanjaya";
+    println!("Hello {}", name);
+
+    name = "lukman";
+    println!("Hello {}", name);
+}
+
+#[test]
+fn static_typing() {
+    let mut name = "Lukman Sanjaya";
+    println!("Hello {}", name);
+
+    name = "Lukman";
+    // name = 10; // error expected str, found integer
+    println!("Hello {}", name);
+}
+
+#[test]
+fn variable_shadowing() {
+    let  name = "Lukman Sanjaya";
+    println!("Hello {}", name);
+
+    let name = 10;
+    println!("Hello {}", name); // akan tampil 10, karena variable sebelumnya tertutupi (shadowing)
+}
+
+#[test]
+fn variable_explicit() {
+    let  age:i32 = 20; // explicit type data variable disebutkan
+    println!("{}", age);
+}
+
+#[test]
+fn number() {
+    let a:i8 = 10;
+    println!("{}", a);
+
+    let b:f32 = 10.5;
+    println!("{}", b);
+}
+
+
+#[test]
+fn number_conversion() {
+    let a:i8 = 10;
+    println!("{}", a);
+
+    let b:i16 = a as i16;
+    println!("{}", b);
+
+    let c:i32 = b as i32;
+    println!("{}", c);
+
+    let d:i64 = 1000000000;
+    let e:i8 = d as i8; // integer overflow, hasil konversi menjadi tidak sesuai expektasi
+    println!("{}", e);
+}
+
+#[test]
+fn numeric_operator() {
+    let a = 10;
+    let b = 10;
+    let c = a * b;
+    let d = a / b;
+    let e = a + b;
+
+    println!("{}", c);
+    println!("{}", d);
+    println!("{}", e);
+}
+
+#[test]
+fn aumented_assignment() {
+    let mut a = 10;
+    println!("{}", a);
+
+    a += 10;
+    println!("{}", a);
+
+    a -= 10;
+    println!("{}", a);
+}
+
+#[test]
+fn boolean() {
+    let a = true;
+    let b:bool = false;
+    println!("{} {}", a, b);
+
+}
+
+#[test]
+fn comparison() {
+    let result:bool = 10 > 20;
+    println!("{}", result);
+
+    let result2:bool = 30 >= 20;
+    println!("{}", result2);
+}
+
+#[test]
+fn boolean_operator() {
+    let absen = 75;
+    let nilai_akhir = 80;
+
+    let lulus = absen >= 75;
+    let lulus_nilai_akhir = nilai_akhir >= 75;
+
+    let lulus_final = lulus && lulus_nilai_akhir;
+    println!("{}", lulus_final);
+}
+
+#[test]
+fn char_type() {
+    let char1 = 'a';
+    let char2 = 'b';
+    println!("{} {}", char1, char2);
+}
+
+#[test]
+fn tuple() {
+    let data:(i32, f64, bool) = (10, 10.5, true);
+    println!("{:?}", data);
+
+    println!("{} {} {}", data.0, data.1, data.2);
+
+    let (a, b, c) = data; // destructuring tuple
+    println!("{} {} {}", a, b, c);
+
+    let mut data2:(i32, f64, bool) = (10, 10.5, true); // mutable tuple
+    println!("{:?}", data2);
+
+    data2.0 = 50;
+    data2.1 = 20.5;
+    data2.2 = false;
+    println!("{:?}", data2);
+}
+
+fn unit() {
+    println!("Hello")
+}
+
+#[test]
+fn test_unit(){
+    let result:() = unit(); // return tuple kosong
+    println!("{:?}", result);
+
+    let test:() = (); //tuple kosong
+    println!("{:?}", test)
+}
+
+#[test]
+fn array() {
+    let array: [i32; 5] = [1, 2, 3, 4, 5];
+    println!("{:?}", array);
+
+    let a = array[0];
+    let b = array[1];
+    println!("{} {}", a, b);
+
+    let mut array_mut: [i32; 5] = [1, 2, 3, 4, 5]; // array mutable
+    array_mut[0] = 10;
+    array_mut[1] = 20;
+    println!("{:?}", array_mut);
+
+    let length: usize = array_mut.len();
+    println!("{}", length)
+}
+
+#[test]
+fn two_dimensional_array() {
+    let matrix: [[i32; 3]; 2] = [
+        [1, 2, 5],
+        [3, 4, 6]
+    ];
+
+    println!("{:?}", matrix);
+    println!("{}", matrix[0][0])
+}
+
+
+const MAXIMUM: i32 = 100;
+#[test]
+fn constant() {
+    const MINIMUM: i32 = 0;
+    println!("{} {}", MAXIMUM, MINIMUM);
+}
+
+#[test]
+fn variable_scope() {
+    let lukman = 1; // variable scope
+
+    { // inner scope
+        println!("inner lukman: {}", lukman);
+
+        let sanjaya = 2;
+        println!("inner sanjaya: {}", sanjaya);
+    }
+        // println!("inner sanjaya: {}", sanjaya); // error
+}
+
+
+#[test]
+fn steack_heap() {
+    function_a();
+    function_b();
+}
+
+fn function_a() {
+    let a = 10; // datanya fix maka disimpan di stack
+    let b = String::from("Lukman"); // datanya tidak fix (datanya bisa membesar & mengecil) maka disimpan di heap
+
+    println!("{} {}", a, b)
+}
+
+fn function_b() {
+    let a = 10; // datanya fix maka disimpan di stack
+    let b = String::from("Sanjaya"); // datanya tidak fix maka disimpan di heap
+
+    println!("{} {}", a, b)
+}
+
+/*
+String
+    &str => string slice (datanya fix), datanya disimpan di stack
+    String => ukuran datanya bisa mengembang, datanya disimpan di heap
+*/
+#[test]
+fn string() {
+    let name: &str = "   Lukman Sanjaya   "; // disimpan dimemory stack
+    let trim: &str = name.trim();
+
+    println!("{}", name);
+    println!("{}", trim);
+
+    let mut username: &str = "Lukman";
+    username = "Sanjaya"; // sebenarnya data Lukman masih ada di memory. variable usename cuman berubah memegang nama Sanjaya (tidak ditimpa cuman mengganti)
+    println!("{}", username);
+}
+
+#[test]
+fn string_type() {
+    let mut name: String = String::from("Lukman"); // disimpan di memory heap
+    name.push_str("Sanjaya"); // data akan langsung ditambah ke heap
+    println!("{}", name);
+
+    let name2 = name.replace("Lukman", "luk"); // replace tidak akan mengubah data di heap, tetapi akan bikin data heap baru
+    println!("{}", name2);
+}
+
+/*
+Ownership Rules
+- Setiap value di Rust harus punya owner (variable pemilik value)
+- Dalam satu waktu, hanya boleh ada satu owner
+- Ketika owner keluar scopr, value akan dihapus
+*/
+
+#[test]
+fn ownership_rules() {
+    let a = 10;
+    {
+        let b = 20;
+        println!("{}", b);
+    } // scope b selesai, b dihapus dari memory, b tidak bisa diakses lagi
+
+    println!("{}", a);
+} // scope a selesai, a dihapus dari memory, a tidak bisa diakses lagi
+
+
+#[test]
+fn data_copy() { // # 1 konsep 1 value 1 owner
+    let a = 10;
+    let b = a; // copy data dari a lalu disimpan ke b, b adalah data stack baru, data b tidak akan ada hubungan dgn a
+
+    println!("{} {}", a, b);
+}
+
+
+#[test]
+fn ownership_movement() { // # 2 konsep 1 value 1 owner. ownership movement tidak berlaku data yg disimpan di stack (hanya di heap)
+    let name1 = String::from("Lukman");
+    let name2 = name1; // name1 tidak bisa diakses lagi (value dipindah)
+
+    // println!("{}", name1); // error value borrowed here after move
+    println!("{}", name2);
+}
+
+#[test]
+fn clone() {
+    let name1 = String::from("Lukman");
+    let name2 = name1.clone(); // membuat data baru (tiruan dari data name1), proses ini akan lebih berat
+
+    println!("{} {}", name1, name2)
+}
+
+#[test]
+fn if_expression() {
+    let value = 9;
+
+    if value >= 8 {
+        println!("Good");
+    } else if value >= 6 {
+        println!("Not bad");
+    } else if value >= 3 {
+        println!("Bad");
+    } else {
+        println!("Very bad");
+    }
+
+    // if let statement
+    let result: &str;
+    if value >= 8 {
+        result = "Good";
+    } else if value >= 6 {
+        result = "Not bad";
+    } else if value >= 3 {
+        result = "Bad";
+    } else {
+        result = "Very bad";
+    }
+
+    println!("{}", result);
+
+    // let statement expression
+    let result2 = if value >= 8 {
+        "Good"
+    } else if value >= 6 {
+        "Not bad"
+    } else if value >= 3 {
+        "Bad"
+    } else {
+        "Very bad"
+    };
+
+    println!("{}", result2);
+}
+
+#[test]
+fn loop_expression() {
+    let mut counter = 0;
+    loop {
+        counter += 1;
+
+        if counter > 10 {
+            break;
+        } else if counter % 2 == 0 {
+            continue;
+        }
+        println!("Counter: {}", counter)
+    }
+}
+
+#[test]
+fn loop_retutn_value() {
+    let mut counter = 0;
+    let result = loop {
+        counter += 1;
+        if counter > 10 {
+            break counter * 2;
+        }
+    };
+
+    println!("Result: {}", result)
+}
+
+#[test]
+fn loop_label() {
+    let mut number = 1;
+    'outer: loop {
+        let mut i = 1;
+        loop {
+            if number > 10 {
+                break 'outer;
+            }
+
+            println!("{} x {} = {}", number, i, number * i);
+            i +=1;
+            if i> 5 {
+                break;
+            }
+        }
+        number += 1;
+    }
+}
+
+
+#[test]
+fn while_loop() {
+    let mut counter = 0;
+    while counter <= 10 {
+        if counter % 2 == 0 {
+            println!("Counter: {}", counter);
+        }
+
+        counter += 1;
+    }
+}
+
+#[test]
+fn array_iteration() {
+    let array: [&str; 5] = ["A", "B", "C", "D", "E"];
+    let mut index = 0;
+
+    while index < array.len() {
+        println!("Value: {}", array[index]);
+        index += 1;
+    }
+}
+
+#[test]
+fn array_iteration_for_loop() {
+    let array: [&str; 5] = ["A", "B", "C", "D", "E"];
+
+    for value in array {
+        println!("Value: {}", value);
+    }
+}
+
+#[test]
+fn range() {
+    let array: [&str; 5] = ["A", "B", "C", "D", "E"];
+
+    let range = 0..5; //range exclusive
+    println!("Start: {}", range.start);
+    println!("End: {}", range.end);
+
+    for i in range {
+        println!("Value: {}", array[i]);
+    }
+}
+
+#[test]
+fn range_inclusive() {
+    let array: [&str; 5] = ["A", "B", "C", "D", "E"];
+
+    let range = 0..=4; //range inclusive
+    println!("Start: {}", range.start());
+    println!("End: {}", range.end());
+
+    for i in range {
+        println!("Value: {}", array[i]);
+    }
+}
+
+fn say_hello() {
+    println!("Hello");
+}
+
+#[test]
+fn test_say_hello() {
+    say_hello();
+    say_hello();
+}
+
+fn say_goodbye(first_name: &str, last_name: &str) {
+    println!("Goodbye {} {}", last_name, first_name);
+}
+
+#[test]
+fn test_say_goodbye() {
+    say_goodbye("Lukman", "Sanjaya");
+    say_goodbye("Joko", "Susanto");
+}
+
+
+fn factorial_loop(n: i32) -> i32 {
+    if n < 1 {
+        return 0;
+    }
+
+    let mut result = 1;
+    for i in 1..=n {
+        result *= i;
+    }
+
+    result
+}
+
+#[test]
+fn test_factorial_loop() {
+    let result = factorial_loop(5);
+    println!("Result: {}", result);
+
+    let result = factorial_loop(-10);
+    println!("Result: {}", result);
+}
+
+fn print_text(value: String, times: u32) {
+    if times == 0 {
+        return;
+    } else {
+        println!("{}", value)
+    }
+    print_text(value, times - 1);
+}
+
+#[test]
+fn test_print_test() {
+    print_text(String::from("Lukman"), 10);
+}
+
+fn factorial_recursive(n: u32) -> u32 {
+    if n <= 1 {
+        return 1;
+    }
+
+    n * factorial_recursive(n - 1)
+}
+
+#[test]
+fn test_factorial_revirsive() {
+    let result = factorial_recursive(5);
+    println!("{}", result);
+}
+
+
+// ownership function
+fn print_number(number: i32) {
+    println!("number {}", number);
+}
+
+fn hi(name: String) {
+    println!("name {}", name);
+}
+
+#[test]
+fn test_hi() {
+    let number = 10;
+    print_number(number);
+    println!("{}", number);
+
+    let name = String::from("Lukman"); // krn type datanya String (disimpan di heap) maka datanya akan pindah ke function
+    // intinya data yg disimpan di heapkalau dikirim ke parameter maka ownership nya akan pindah ke parameter tsb
+    hi(name);
+    // println!("{}", name); // error value borrowed here after move
+}
+
+// return value ownership
+fn full_name(first_name: String, last_name: String) -> String {
+    format!("{} {}", first_name, last_name)
+}
+
+#[test]
+fn test_full_name() {
+    let first_name = String::from("Lukman");
+    let last_name = String::from("Sanjaya");
+
+    let name = full_name(first_name, last_name);
+    println!("{}", name);
+    // println!("{}", first_name); // error
+    // println!("{}", last_name); // error
+}
+
+// mengembalikan ownership
+fn full_name2(first_name: String, last_name: String) -> (String, String, String) {
+    let full_name = format!("{} {}", first_name, last_name);
+
+    (first_name, last_name, full_name)
+}
+
+#[test]
+fn test_full_name2() {
+    let first_name = String::from("Lukman");
+    let last_name = String::from("Sanjaya");
+
+    let (first_name, last_name, name) = full_name2(first_name, last_name);
+    println!("{}", name);
+    println!("{}", first_name);
+    println!("{}", last_name);
+}

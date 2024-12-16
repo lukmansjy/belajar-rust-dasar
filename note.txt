@@ -1,0 +1,7 @@
+# Create new project: cargo new nama-project
+
+# Run project: cargo run
+
+# Run Unit Test:
+    cargo test <nama_fn_test> -- --exact
+    cargo test hello_test -- --exact --nocapture
