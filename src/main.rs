@@ -1,5 +1,5 @@
 use core::time;
-use std::{mem::replace, result};
+use std::{fmt::format, mem::replace, result};
 
 fn main() {
     println!("Hello, world!");
@@ -590,3 +590,49 @@ fn test_full_name2() {
     println!("{}", first_name);
     println!("{}", last_name);
 }
+
+// references
+fn full_name3(first_name: &String, last_name: &String) -> String {
+    format!("{} {}", first_name, last_name)
+}
+
+#[test]
+fn test_full_name3() {
+    let first_name = String::from("Lukman");
+    let last_name = String::from("Sanjaya");
+
+    let name = full_name3(&first_name, &last_name);
+    println!("{}", name);
+    println!("{}", first_name);
+    println!("{}", last_name);
+}
+
+// borrowing (tidak boleh modifikasi value)
+fn change_value(value: &String) {
+    // value.push_str("test"); // error `value` is a `&` reference, so the data it refers to cannot be borrowed as mutable
+}
+
+#[test]
+fn test_change_value() {
+    let mut value = String::from("Lukman");
+    change_value(&value);
+    println!("{}", value);
+}
+
+// borrowing (boleh modifikasi value)
+fn change_value2(value: &mut String) {
+    value.push_str("test");
+}
+
+#[test]
+fn test_change_value2() {
+    let mut value = String::from("Lukman");
+    change_value2(&mut value);
+    println!("{}", value);
+}
+
+// dangling pointer (datanya sudah tidak ada di memory) / function mengembalikan data pointer tidak diperbolehkan
+// fn get_full_name(first_name: &String, last_name: &String) -> &String { // error
+//     let name = format!("{} {}", first_name, last_name);
+//     return &name;
+// }
