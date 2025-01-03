@@ -636,3 +636,116 @@ fn test_change_value2() {
 //     let name = format!("{} {}", first_name, last_name);
 //     return &name;
 // }
+
+
+// slice
+#[test]
+fn slice_reference() {
+    let array: [i32; 10] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let slice1: &[i32] = &array[..]; // slice full range
+    println!("{:?}", slice1);
+
+    let slice2: &[i32] = &array[0..5]; // slice [start..end] yg diambil index 0 - 4 krn exclusive
+    println!("{:?}", slice2);
+
+    let slice3: &[i32] = &array[5..]; // slice ambil dr index 5 - akhir
+    println!("{:?}", slice3);
+}
+
+#[test]
+fn string_slice() {
+    let name: String = String::from("Lukman Sanjaya");
+    let first_name: &str = &name[0..6];
+    println!("{}", first_name);
+
+    let last_name: &str = &name[7..];
+    println!("{}", last_name);
+}
+
+// struct
+struct Person {
+    first_name: String,
+    middle_name: String,
+    last_name: String,
+    age: u8
+}
+
+fn print_person(person: &Person) {
+    println!("{}", person.first_name);
+    println!("{}", person.middle_name);
+    println!("{}", person.last_name);
+    println!("{}", person.age);
+}
+
+
+#[test]
+fn struct_person() {
+    let person: Person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 17
+    };
+
+    print_person(&person);
+}
+
+//  struct init shorthand
+#[test]
+fn struct_person_shorthand() {
+    let first_name = String::from("Lukman");
+    let last_name = String::from("Sanjaya");
+
+    let person: Person = Person {
+        first_name, // ownership berpindah
+        middle_name: String::from("S"),
+        last_name, // ownership berpindah
+        age: 17
+    };
+
+    // println!(last_name); //error ownership berpindah
+    print_person(&person);
+}
+
+// struct update syntax (copy data person sebelumnya)
+#[test]
+fn struct_person_update_syntax() {
+    let first_name = String::from("Lukman");
+    let last_name = String::from("Sanjaya");
+
+    let person: Person = Person {
+        first_name,
+        middle_name: String::from("S"),
+        last_name,
+        age: 17
+    };
+
+    print_person(&person);
+
+    // let person2: Person = Person {..person}; // ini data yg di heap akan berpindah ownership, sebaiknya menggunakan clone
+    let person2: Person = Person {
+        first_name: person.first_name.clone(),
+        middle_name: person.middle_name.clone(),
+        last_name: person.last_name.clone(),
+        ..person
+    };
+    print_person(&person2);
+}
+
+// struct tuple
+struct GeoPoint(f64, f64);
+
+#[test]
+fn struct_tuple() {
+    let geo_point = GeoPoint(-6.20, 106.816);
+    println!("long: {}", geo_point.0);
+    println!("lat: {}", geo_point.1);
+}
+
+// struct tanpa field
+struct Nothing;
+#[test]
+fn test_nothing() {
+    let _nothing1: Nothing = Nothing;
+    let _nothing2: Nothing = Nothing {};
+}
