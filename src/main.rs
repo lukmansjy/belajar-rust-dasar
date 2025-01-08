@@ -749,3 +749,72 @@ fn test_nothing() {
     let _nothing1: Nothing = Nothing;
     let _nothing2: Nothing = Nothing {};
 }
+
+// method
+impl Person { // membuat method didalam struct
+    fn say_hello(&self, name: &str) {
+        println!("Hello {}, my name is {}", name, self.first_name)
+    }
+}
+
+#[test]
+fn test_method() {
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 18,
+    };
+
+    person.say_hello("Joko");
+}
+
+// associated functions (diakses langsung dr NamaStruct::nama_funct)
+impl GeoPoint {
+    fn new(long: f64, lat: f64) -> GeoPoint {
+        GeoPoint(long, lat)
+    }
+}
+
+#[test]
+fn test_method_new() {
+    let geo_pint: GeoPoint = GeoPoint::new(-6.34, 106.81);
+    println!("long: {}", geo_pint.0);
+    println!("lat: {}", geo_pint.1);
+}
+
+// enum
+enum Level {
+    Regular,
+    Premium,
+    Platinum,
+}
+
+#[test]
+fn test_enum() {
+    let _level: Level = Level::Premium;
+}
+
+enum Payment {
+    // cart number
+    CreditCart(String),
+    // bank name, account number
+    BankTransfer(String, String),
+    // ewallet name, ewallet number
+    EWallet(String, String),
+}
+
+impl Payment {
+    fn pay(&self, amount: u32) {
+        println!("Paying amount {}", amount);
+    }
+}
+
+#[test]
+fn test_payment() {
+    let payment1: Payment = Payment::BankTransfer(String::from("BCA"), String::from("232423513"));
+    let _payment2: Payment = Payment::EWallet(String::from("Dana"), String::from("353232131"));
+    let _payment3: Payment = Payment::CreditCart(String::from("3532332322131"));
+
+    payment1.pay(10000);
+}
