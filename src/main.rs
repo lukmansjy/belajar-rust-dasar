@@ -818,3 +818,148 @@ fn test_payment() {
 
     payment1.pay(10000);
 }
+
+// pattren matching
+// pattren matching untuk enum
+#[test]
+fn test_enum_matching() {
+    let level: Level = Level::Premium;
+    match level {
+        Level::Regular => {
+            println!("Regular");
+        }
+        Level::Premium => {
+            println!("Premium");
+        }
+        Level::Platinum => {
+            println!("Platinum");
+        }
+    }
+}
+
+// destructuring emum data patterns
+impl Payment {
+    fn pay2(&self, amount: u32) {
+        match self {
+            Payment::CreditCart(number) => {
+                println!("Paying with credit card {} amount {}", number, amount);
+            }
+            Payment::BankTransfer(bank, number) => {
+                println!("Paying with bank transfer {} {} amount {}", bank, number, amount);
+            }
+            Payment::EWallet(wallet, number) => {
+                println!("Paying with ewallet {} {} amount {}",wallet, number, amount);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_payment_2() {
+    let payment1: Payment = Payment::BankTransfer(String::from("BCA"), String::from("232423513"));
+    let _payment2: Payment = Payment::EWallet(String::from("Dana"), String::from("353232131"));
+    let _payment3: Payment = Payment::CreditCart(String::from("3532332322131"));
+
+    payment1.pay2(10000);
+}
+
+// pattern matching untuk value
+#[test]
+fn test_match_value() {
+    let name: &str = "Lukman";
+
+    match name {
+        "Budi" => {
+            println!("Hello Budi");
+        }
+        "Lukman" => {
+            println!("Hello Lukman");
+        }
+        other => {
+            println!("Hello {}", other);
+        }
+    }
+}
+
+// multiple patterns
+#[test]
+fn test_match_value_multiple() {
+    let name: &str = "Budi";
+
+    match name {
+        "Budi" | "Joko" => {
+            println!("Hello Bos");
+        }
+        other => {
+            println!("Hello {}", other);
+        }
+    }
+}
+
+// range patterns
+#[test]
+fn test_range_patterns() {
+    let value = 100;
+    match value {
+        75..=100 =>{
+            println!("Great")
+        }
+        50..=74 =>{
+            println!("Good")
+        }
+        25..=49 =>{
+            println!("Not Bad")
+        }
+        0..=24 =>{
+            println!("Bad")
+        }
+        other =>{
+            println!("Invalid value {}", other)
+        }
+    }
+}
+
+// destructuring struct patterns
+#[test]
+fn test_struct_patterns() {
+    let point = GeoPoint(0.0, 1.0);
+
+    match point {
+        GeoPoint(long, 0.0) => {
+            println!("long: {}", long);
+        }
+        GeoPoint(0.0, lat) => {
+            println!("lat: {}", lat);
+        }
+        GeoPoint(long, lat) => {
+            println!("long: {}, lat: {}", long, lat);
+        }
+    }
+
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 20,
+    };
+
+    match person {
+        Person{ first_name, last_name, ..} => {
+            println!("First Name: {}, Last Name: {}", first_name, last_name);
+        }
+    }
+}
+
+// math expression
+#[test]
+fn test_match_expression() {
+    let value: i32 = 2;
+    let result: &str = match value {
+        0 => "nol",
+        1 => "satu",
+        2 => "dua",
+        _ => "invalid"
+    };
+
+    println!("{}", result)
+}
