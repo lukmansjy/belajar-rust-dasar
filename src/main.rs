@@ -464,9 +464,9 @@ fn range_inclusive() {
     }
 }
 
-fn say_hello() {
-    println!("Hello");
-}
+// fn say_hello() {
+//     println!("Hello");
+// }
 
 #[test]
 fn test_say_hello() {
@@ -962,4 +962,67 @@ fn test_match_expression() {
     };
 
     println!("{}", result)
+}
+
+// type alias
+type Age = u8;
+type IdentityNumber = String;
+
+struct Customer {
+    id: IdentityNumber,
+    name: String,
+    age: Age,
+}
+
+#[test]
+fn test_customer() {
+    let customer = Customer {
+        id: String::from("13142132"),
+        name: String::from("Lukman"),
+        age: 18,
+    };
+
+    println!("{} {} {}", customer.id, customer.name, customer.age)
+}
+
+// module
+mod model {
+    pub struct User {
+        pub first_name: String,
+        pub last_name: String,
+        pub username: String,
+        pub email: String,
+        pub age: u8,
+    }
+
+    impl User {
+        pub fn say_hello(&self, name: &str) {
+            println!("Hello {}, my name is {}", name, self.first_name)
+        }
+    }
+}
+
+#[test]
+fn test_module() {
+    let user = model::User{
+        first_name: String::from("Lukman"),
+        last_name: String::from("Sanjaya"),
+        username: String::from("lukman"),
+        email: String::from("luk@test.com"),
+        age: 18,
+    };
+
+    user.say_hello("Joko");
+}
+
+
+mod first;
+mod second;
+
+use first::say_hello;
+use second::say_hello as say_hello_second;
+#[test]
+fn test_use() {
+    say_hello();
+    say_hello_second();
 }
