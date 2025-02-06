@@ -1026,3 +1026,320 @@ fn test_use() {
     say_hello();
     say_hello_second();
 }
+
+// create
+mod third; // ini digunakan di module lain, jadi perlu di panggil di file main
+
+// trait (seperti interface)
+trait CanSayHello {
+    fn hello(&self) -> String { // default implementation
+        String::from("hello")
+    }
+    fn say_hello(&self) -> String;
+    fn say_hello_to(&self, name: &str) -> String;
+}
+
+impl CanSayHello for Person {
+    fn say_hello(&self) -> String {
+        format!("Hello, my name is {}", self.first_name)
+    }
+
+    fn say_hello_to(&self, name: &str) -> String {
+        format!("Hello {}, my name is {}", name, self.first_name)
+    }
+}
+
+#[test]
+fn test_trait() {
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 18
+    };
+
+    let result = person.say_hello_to("budi");
+    println!("{}", result);
+
+    println!("{}", person.hello());
+}
+
+// trait sebagai parameter
+fn say_hello_trait(value: &impl CanSayHello) {
+    println!("{}", value.say_hello());
+}
+
+#[test]
+fn test_trait_param() {
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 18
+    };
+
+    say_hello_trait(&person);
+}
+
+// multiple trait
+trait CanSayGoodBye {
+    fn good_bye(&self) -> String;
+    fn good_bye_to(&self, name: &str) -> String;
+}
+
+impl CanSayGoodBye for Person {
+    fn good_bye(&self) -> String {
+        format!("Goodbye, my name is {}", self.first_name)
+    }
+
+    fn good_bye_to(&self, name: &str) -> String {
+        format!("Goodbye {}, my name is {}", name, self.first_name)
+    }
+}
+
+fn hello_and_goodbye(value: &(impl CanSayHello + CanSayGoodBye)) {
+    println!("{}", value.say_hello());
+    println!("{}", value.good_bye());
+}
+
+#[test]
+fn test_multi_trait() {
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 18
+    };
+
+    say_hello_trait(&person);
+    hello_and_goodbye(&person);
+}
+
+// return trait
+struct SimplePerson {
+    name: String,
+}
+
+impl CanSayGoodBye for SimplePerson {
+    fn good_bye(&self) -> String {
+        format!("Good bye, my name is {}", self.name)
+    }
+
+    fn good_bye_to(&self, name: &str) -> String {
+        format!("Good bye {}, my name is {}", name, self.name)
+    }
+}
+
+fn create_simple_person(name: String) -> impl CanSayGoodBye {
+    SimplePerson {name}
+}
+
+#[test]
+fn test_return_trait() {
+    let person = create_simple_person(String::from("Lukman"));
+    print!("{}", person.good_bye())
+}
+
+// conflict
+#[test]
+fn test_trait_conflict() {
+    let person = Person {
+        first_name: String::from("Lukman"),
+        middle_name: String::from("S"),
+        last_name: String::from("Sanjaya"),
+        age: 18
+    };
+
+    CanSayHello::say_hello(&person); // panggil say hello milik CanSayHello
+    Person::say_hello(&person, "Budi"); // panggil say hello milik Person
+}
+
+// super trait
+trait CanSay: CanSayHello + CanSayGoodBye {
+    fn say(&self) {
+        println!("{}", self.say_hello());
+        println!("{}", self.good_bye());
+    }
+}
+
+struct SimpleMan {
+    name: String,
+}
+
+impl CanSayHello for SimpleMan {
+    fn say_hello(&self) -> String {
+        format!("Hello, my name is {}", self.name)
+    }
+
+    fn say_hello_to(&self, name: &str) -> String {
+        format!("Hello {}, my name is {}", name, self.name)
+    }
+}
+
+impl CanSayGoodBye for SimpleMan {
+    fn good_bye(&self) -> String {
+        format!("Good bye, my name is {}", self.name)
+    }
+
+    fn good_bye_to(&self, name: &str) -> String {
+        format!("Good bye {}, my name is {}", name, self.name)
+    }
+}
+
+impl CanSay for SimpleMan {}
+
+#[test]
+fn test_super_trait() {
+    let simple_man = SimpleMan {
+        name: String::from("Lukman"),
+    };
+
+    simple_man.say();
+}
+
+// generic
+struct Point<T> {
+    x: T,
+    y: T
+}
+
+#[test]
+fn test_generic_struct() {
+    let integer = Point::<i32> {
+        x: 12, y: 20
+    };
+
+    let float:Point<f64> = Point::<f64> {
+        x: 12.01, y: 20.05
+    };
+
+    println!("{} {}", integer.x, integer.y);
+    println!("{} {}", float.x, float.y);
+}
+
+
+// generic di enum
+enum Value<T> {
+    NONE,
+    VALUE(T)
+}
+
+#[test]
+fn test_generic_enum() {
+    let value: Value<i32> = Value::<i32>::VALUE(10);
+
+    match value {
+        Value::NONE => {
+            println!("none")
+        }
+        Value::VALUE(value) => {
+            println!("{}", value)
+        }
+    }
+}
+
+// generic type bound
+struct Hi<T: CanSayGoodBye> {
+    value: T
+}
+
+#[test]
+fn test_generic_struct_with_trait() {
+    let hi = Hi::<SimplePerson>{
+        value: SimplePerson {
+            name: String::from("Lukman")
+        }
+    };
+    println!("{}", hi.value.name);
+}
+
+// generic di function
+// PartialOrd adalah type data yg bisa dibandingkan (int, float, string)
+fn min<T: PartialOrd>(value1: T, value2: T) -> T{
+    if value1 < value2 {
+        value1
+    } else {
+        value2
+    }
+}
+
+#[test]
+fn generic_in_function() {
+    let result = min::<i32>(10, 23);
+    println!("{}", result);
+
+    let result2 = min(11, 20);
+    println!("{}", result2);
+
+    let result3 = min(11.03, 20.05);
+    println!("{}", result3);
+}
+
+// generic di method
+impl<T> Point<T> { // generic T di impl<T> akan di kirim ke generic Point<T>
+    fn get_x(&self) -> &T {
+        &self.x
+    }
+    fn get_y(&self) -> &T {
+        &self.y
+    }
+}
+
+#[test]
+fn test_generic_method() {
+    let point = Point{x:10, y:20};
+    println!("{}", point.get_x());
+    println!("{}", point.get_y());
+}
+
+// generic di trait
+trait GetValue<T> {
+    fn get_value(&self) -> &T;
+}
+
+impl<T> GetValue<T> for Point<T> {
+    fn get_value(&self) -> &T {
+        &self.x
+    }
+}
+
+#[test]
+fn test_generic_trait() {
+    let point = Point{x:10, y:20};
+    println!("{}", point.get_value());
+}
+
+// where cluse
+trait GetValue2<T> where T: PartialOrd {
+    fn get_value2(&self) -> &T;
+}
+
+impl<T> GetValue2<T> for Point<T> where T: PartialOrd {
+    fn get_value2(&self) -> &T {
+        &self.x
+    }
+}
+
+#[test]
+fn test_generic_trait_where() {
+    let point = Point{x:10, y:20};
+    println!("{}", point.get_value2());
+}
+
+// default generic type
+struct Point2<T = i32> {
+    x: T,
+    y: T,
+}
+
+#[test]
+fn test_generic_default_value() {
+    let point = Point2{x:10, y:20};
+    println!("x: {}, y: {}", point.x, point.y);
+
+    let point = Point2::<f32>{x:10.5, y:20.7};
+    println!("x: {}, y: {}", point.x, point.y);
+
+    let point = Point2::<f64>{x:10.7, y:20.5};
+    println!("x: {}, y: {}", point.x, point.y);
+}
