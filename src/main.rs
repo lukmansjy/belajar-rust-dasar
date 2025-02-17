@@ -1343,3 +1343,48 @@ fn test_generic_default_value() {
     let point = Point2::<f64>{x:10.7, y:20.5};
     println!("x: {}, y: {}", point.x, point.y);
 }
+
+// overloadable operator
+struct Apple {
+    quantity: i32,
+}
+
+use core::ops::Add;
+
+impl Add for Apple {
+    type Output = Apple;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Apple {
+            quantity: self.quantity + rhs.quantity,
+        }
+    }
+}
+
+#[test]
+fn test_operator_add() {
+    let apple1 = Apple{quantity:10};
+    let apple2 = Apple{quantity:15};
+
+    let apple3 = apple1 + apple2;
+
+    println!("{}", apple3.quantity);
+}
+
+// Optional Values
+
+fn double(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i * 2)
+    }
+}
+
+#[test]
+fn test_optional_value() {
+    let result = double(Some(3));
+    println!("{:?}", result);
+
+    let result = double(None);
+    println!("{:?}", result);
+}
