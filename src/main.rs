@@ -1388,3 +1388,78 @@ fn test_optional_value() {
     let result = double(None);
     println!("{:?}", result);
 }
+
+// Comparing
+impl PartialEq for Apple {
+    fn eq(&self, other: &Self) -> bool {
+        self.quantity == other.quantity
+    }
+}
+
+impl PartialOrd for Apple {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.quantity.partial_cmp(&other.quantity)
+    }
+}
+
+#[test]
+fn test_compare() {
+    let apple1 = Apple { quantity: 10};
+    let apple2 = Apple { quantity: 20};
+
+    println!("Apple1 == Apple2: {}", apple1 == apple2);
+    println!("Apple1 > Apple2: {}", apple1 > apple2);
+    println!("Apple1 < Apple2: {}", apple1 < apple2);
+}
+
+// String Manipulation
+#[test]
+fn test_string_manipulation() {
+    let s = String::from("Lukman Sanjaya");
+    // let s = "Lukman Sanjaya";
+
+    println!("{}", s.to_uppercase());
+    println!("{}", s.to_lowercase());
+    println!("{}", s.len());
+    println!("{}", s.replace("Sanjaya", "S"));
+    println!("{}", s.contains("Lukman"));
+    println!("{}", s.starts_with("Lukman"));
+    println!("{}", s.ends_with("Sanjaya"));
+    println!("{}", s.trim());
+    println!("{}", &s[0..6]);
+    println!("{:?}", s.get(0..6));
+}
+
+// Formating
+struct Category {
+    id: String,
+    name: String
+}
+
+use std::fmt::{{Debug, Formatter}};
+impl Debug for Category {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Category")
+        .field("id", &self.id)
+        .field("id", &self.name)
+        .finish()
+    }
+}
+
+#[test]
+fn test_format() {
+    // error krn SimplePerson belum implemeny Debug atau Display
+    // let person = SimplePerson {
+    //     name: String::from("Lukman")
+    // };
+
+    // println!("{}", person) // error SimplePerson doesn't implement Display
+    // println!("{:?}", person) // error SimplePerson doesn't implement Debug
+
+    let category = Category {
+        id: String::from("gadget"),
+        name: String::from("Gadget")
+    };
+
+    println!("Category: {:?}", category);
+}
